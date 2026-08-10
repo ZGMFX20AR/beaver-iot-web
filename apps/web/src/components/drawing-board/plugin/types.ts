@@ -33,6 +33,7 @@ export type ControlType =
     | 'ChartMetricsSelect'
     | 'MultiDeviceSelect'
     | 'AlarmTimeSelect'
+    | 'MapTileSelect'
     | 'ChartMarkLine';
 
 export type ControlTypePropsMap = {
@@ -49,6 +50,7 @@ export type ControlTypePropsMap = {
     ChartMetricsSelect: Partial<ChartMetricsSelectProps>;
     MultiDeviceSelect: MultiDeviceSelectProps;
     AlarmTimeSelect: Partial<PluginSelectProps>;
+    MapTileSelect: Partial<PluginSelectProps>;
 };
 
 // Check the completeness of ControlTypePropsMap
@@ -103,6 +105,7 @@ export interface ControlPanelSectionConfig<T extends AnyDict = AnyDict> {
 }
 
 export type PluginType =
+    | 'aiInsightCard'
     | 'areaChart'
     | 'barChart'
     | 'dataCard'

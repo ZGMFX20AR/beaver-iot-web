@@ -1,3 +1,15 @@
 packages:
-    - 'apps/**'
-    - 'packages/**'
+  - 'apps/**'
+  - 'packages/**'
+allowBuilds:
+  esbuild: true
+  react-intl-universal: true
+# Force a single CodeMirror runtime — duplicate @codemirror/state breaks instanceof checks
+overrides:
+  '@codemirror/state': 6.7.1
+  '@codemirror/view': 6.43.6
+  '@codemirror/language': 6.12.4
+  '@codemirror/autocomplete': 6.20.3
+  '@codemirror/commands': 6.10.4
+  '@codemirror/lint': 6.9.7
+  '@codemirror/search': 6.7.1

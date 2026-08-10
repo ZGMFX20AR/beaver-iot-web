@@ -55,7 +55,7 @@ const useVirtualList = <T = any>(list: T[], options: Options<T>) => {
         // The starting index may only have a partial area within the container viewport,
         // so it is calculated from the next index of the starting index
         for (let i = fromIndex + 1; i < list.length; i++) {
-            const height = itemHeightRef.current(i, list[i]);
+            const height = (itemHeightRef.current as ItemHeight<T>)(i, list[i]);
             sum += height;
             endIndex = i;
             if (sum >= containerHeight) {
@@ -75,7 +75,7 @@ const useVirtualList = <T = any>(list: T[], options: Options<T>) => {
         let sum = 0;
         let offset = 0;
         for (let i = 0; i < list.length; i++) {
-            const height = itemHeightRef.current(i, list[i]);
+            const height = (itemHeightRef.current as ItemHeight<T>)(i, list[i]);
             sum += height;
             if (sum >= scrollTop) {
                 offset = i;

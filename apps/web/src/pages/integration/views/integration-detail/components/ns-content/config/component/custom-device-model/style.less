@@ -1,0 +1,50 @@
+.ms-custom-device-model {
+    &__empty {
+        padding: @padding-xl 0;
+        color: var(--text-color-tertiary);
+        text-align: center;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: @padding-sm @padding-md;
+        border: 1px solid var(--border-color-base);
+        border-radius: @border-radius-base;
+
+        & + & {
+            margin-top: @margin-xs;
+        }
+    }
+
+    &__item-info {
+        min-width: 0;
+    }
+
+    &__item-name {
+        font-weight: @font-weight-bold;
+        color: var(--text-color-base);
+    }
+
+    &__item-desc {
+        font-size: 12px;
+        color: var(--text-color-tertiary);
+    }
+}
+
+.ms-custom-device-model-editor {
+    &__section-title {
+        margin: @margin-md 0 @margin-xs;
+        font-weight: @font-weight-bold;
+        color: var(--text-color-base);
+    }
+
+    &__code {
+        height: 280px;
+        margin-top: @margin-xs;
+        overflow: hidden;
+        border: 1px solid var(--border-color-base);
+        border-radius: @border-radius-base;
+    }
+}

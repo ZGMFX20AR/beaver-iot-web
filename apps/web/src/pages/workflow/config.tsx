@@ -15,7 +15,9 @@ import {
     OutputIcon,
     HttpIcon,
     MqttIcon,
-    // AutoAwesomeIcon,
+    HistoryIcon,
+    AutoAwesomeIcon,
+    WarningAmberIcon,
     // FlagIcon,
 } from '@milesight/shared/src/components';
 
@@ -361,6 +363,71 @@ export const basicNodeConfigs: Record<WorkflowNodeType, NodeConfigItemType> = {
             },
             {
                 key: 'entityData.keys',
+                type: 'entities',
+            },
+        ],
+    },
+    llmCompletion: {
+        type: 'llmCompletion',
+        componentName: 'llmCompletion',
+        labelIntlKey: 'workflow.label.llm_completion_node_name',
+        icon: <AutoAwesomeIcon />,
+        iconBgColor: '#7B61FF',
+        category: 'action',
+        // The node always emits a single fixed `completion` key, so declare it statically
+        // rather than deriving it from user-editable parameters.
+        outputs: [
+            {
+                key: 'completion',
+                label: 'Completion',
+                type: 'static',
+                valueType: 'STRING',
+            },
+        ],
+    },
+    anomalyDetection: {
+        type: 'anomalyDetection',
+        componentName: 'anomalyDetection',
+        labelIntlKey: 'workflow.label.anomaly_detection_node_name',
+        icon: <WarningAmberIcon />,
+        iconBgColor: '#FF9800',
+        category: 'action',
+        // Fixed output keys computed by the node, declared statically so the variable
+        // picker offers them (branch on `hasAnomaly`, narrate `summary`).
+        outputs: [
+            {
+                key: 'hasAnomaly',
+                label: 'Has Anomaly',
+                type: 'static',
+                valueType: 'BOOLEAN',
+            },
+            {
+                key: 'anomalyCount',
+                label: 'Anomaly Count',
+                type: 'static',
+                valueType: 'LONG',
+            },
+            {
+                key: 'summary',
+                label: 'Summary',
+                type: 'static',
+                valueType: 'STRING',
+            },
+        ],
+    },
+    entityHistory: {
+        type: 'entityHistory',
+        componentName: 'entityHistory',
+        labelIntlKey: 'workflow.label.entity_history_node_name',
+        icon: <HistoryIcon />,
+        iconBgColor: '#7E57C2',
+        category: 'action',
+        // Same shape as the `select` node: `parameters.entities` is a string[] of entity
+        // keys, and the node outputs one aggregated value per key, so the variable picker
+        // expands them the same way.
+        outputs: [
+            {
+                key: 'entities',
                 type: 'entities',
             },
         ],

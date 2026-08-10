@@ -352,6 +352,7 @@ const ConditionsInput: React.FC<ConditionsInputProps> = props => {
                                                     />
                                                     <Select
                                                         defaultValue=""
+                                                        // @ts-ignore - MUI's Select doesn't officially support `placeholder`, but does pass it through
                                                         placeholder="Condition"
                                                         labelId="param-select-label"
                                                         IconComponent={KeyboardArrowDownIcon}

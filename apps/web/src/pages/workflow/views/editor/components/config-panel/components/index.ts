@@ -33,3 +33,5 @@ export { default as HttpCurlInfo } from './http-curl-info';
 export { default as HttpOutputInfo, type Props as HttpOutputInfoProps } from './http-output-info';
 export { default as ParamsList, type Props as ParamsListProps } from './params-list';
 export { default as EntityDataSelect } from './entity-data-select';
+export { default as LlmModelSelect } from './llm-model-select';
+export { default as DataEditor, type DataEditorProps } from './data-editor';

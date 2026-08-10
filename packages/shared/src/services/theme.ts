@@ -103,18 +103,18 @@ export const deepOrange = {
     900: '#AB3813',
 } as const;
 
-/** Theme color - purple */
+/** Theme color - brand (Cytron blue, #00A5DC) */
 export const purple = {
-    50: '#F5F2FF',
-    100: '#EAE3FD',
-    200: '#DDD2FC',
-    300: '#CBBBFA',
-    400: '#B49CFA',
-    500: '#A385F8',
-    600: '#8E66FF',
-    700: '#7B4EFA',
-    800: '#633FC8',
-    900: '#462C8E',
+    50: '#F5FBFE',
+    100: '#EBF7FD',
+    200: '#D8EFFB',
+    300: '#B2E3F9',
+    400: '#7FD4F5',
+    500: '#4CC6F2',
+    600: '#1AB8EE',
+    700: '#00A5DC',
+    800: '#007A9E',
+    900: '#004E66',
 } as const;
 
 /** Theme color - gray */

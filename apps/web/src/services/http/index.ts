@@ -47,6 +47,11 @@ export {
     type SyncAbleDeviceType,
     type DeviceModelItem,
     type GatewayDetailType,
+    type CustomDeviceModelType,
+    type CustomDeviceModelEntity,
+    type CustomDeviceModelPayload,
+    type CustomDeviceModelValueType,
+    type LoraClassType,
 } from './embedded-ns';
 export {
     default as credentialsApi,
@@ -56,6 +61,10 @@ export {
     type CredentialAPISchema,
 } from './credentials';
 export { default as camthinkApi, type CamthinkAPISchema, type InferStatus } from './camthink';
+export {
+    default as irivIocApi,
+    type ValidateConnectionResponse as IrivIocValidateConnectionResponse,
+} from './iriv-ioc';
 export {
     default as mqttApi,
     DEFAULT_DEVICE_OFFLINE_TIMEOUT,
@@ -67,4 +76,10 @@ export {
     type DataReportResult,
 } from './mqtt';
 export { default as tagAPI, type TagAPISchema, type TagItemProps, TagOperationEnums } from './tag';
+export { default as llmAPI, type LlmAPISchema } from './llm';
+export {
+    default as aiAssistantAPI,
+    type AiAssistantAPISchema,
+    type AiAssistantChatMessage,
+} from './ai-assistant';
 export { default as blueprintAPI, BlueprintSourceType, type BlueprintAPISchema } from './blueprint';

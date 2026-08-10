@@ -12,7 +12,7 @@ import { PluginFullscreenContext } from '@/components/drawing-board/components';
 import { type DeviceDetail } from '@/services/http';
 import { useStableValue } from '../../../hooks';
 import { BaseMap, MobileSearchInput } from './component';
-import { useDeviceData, useDeviceEntities } from './hooks';
+import { useDeviceData, useDeviceEntities, useDeviceTrail } from './hooks';
 import { MapContext, type MapContextProps } from './context';
 
 import { type MapConfigType } from '../control-panel';
@@ -27,7 +27,7 @@ export interface MapViewProps {
 
 const MapView: React.FC<MapViewProps> = props => {
     const { config, configJson } = props;
-    const { title, devices: unStableValue } = config || {};
+    const { title, devices: unStableValue, tileType, trail, trailTime } = config || {};
     const { isPreview } = configJson || {};
 
     const { getIntlText } = useI18n();
@@ -66,6 +66,13 @@ const MapView: React.FC<MapViewProps> = props => {
     } = useDeviceEntities({
         isPreview,
         data,
+    });
+
+    const { trails } = useDeviceTrail({
+        devices: data,
+        trailTime,
+        // Trails are only meaningful in a live view, not the config-panel preview.
+        enabled: trail === 'on' && !isPreview,
     });
 
     const mapContextValue = useMemo((): MapContextProps => {
@@ -241,6 +248,8 @@ const MapView: React.FC<MapViewProps> = props => {
 
                 <BaseMap
                     title={title}
+                    tileType={tileType}
+                    trails={trails}
                     showMobileSearch={showMobileSearch}
                     devices={data}
                     selectDevice={selectDevice}

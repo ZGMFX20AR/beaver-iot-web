@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useRequest } from 'ahooks';
 import cls from 'classnames';
 import { useI18n, useTheme, useStoreShallow } from '@milesight/shared/src/hooks';
@@ -11,12 +11,20 @@ import {
 import routes, { filterMobileRoutes } from '@/routes/routes';
 import { useUserStore } from '@/stores';
 import { globalAPI, awaitWrap, getResponseData, isRequestSuccess } from '@/services/http';
-import { Sidebar, RouteLoadingIndicator } from '@/components';
+import { Sidebar, RouteLoadingIndicator, FloatingAiAssistant } from '@/components';
 import { useUserPermissions } from '@/hooks';
+import { PERMISSIONS } from '@/constants';
 import useSidebarStore from '@/components/sidebar/store';
 import useDrawingBoardStore from '@/components/drawing-board/store';
 import { useRoutePermission, useSWUpdate } from './hooks';
 import { LayoutSkeleton } from './components';
+
+/**
+ * Pages the floating AI assistant is offered on. Its tools read live and historical
+ * entity values, so it is only useful where the page is about that data — there is
+ * nothing for it to answer on Settings, User Role or Tag management.
+ */
+const AI_ASSISTANT_PATHS = ['/dashboard', '/device', '/entity'];
 
 function BasicLayout() {
     const { lang } = useI18n();
@@ -104,6 +112,16 @@ function BasicLayout() {
      */
     const { hasPathPermission } = useRoutePermission(loading);
 
+    // ---------- Floating AI assistant ----------
+    const { pathname } = useLocation();
+    const showAiAssistant = useMemo(() => {
+        if (!hasPermission(PERMISSIONS.DASHBOARD_MODULE)) return false;
+
+        return AI_ASSISTANT_PATHS.some(
+            path => pathname === path || pathname.startsWith(`${path}/`),
+        );
+    }, [pathname, hasPermission]);
+
     // ---------- SW update confirm ----------
     useSWUpdate();
 
@@ -123,6 +141,7 @@ function BasicLayout() {
                 <>
                     <Sidebar menus={menus} />
                     <main className="ms-layout-right">{hasPathPermission ? <Outlet /> : null}</main>
+                    {hasPathPermission && showAiAssistant && <FloatingAiAssistant />}
                 </>
             )}
         </section>

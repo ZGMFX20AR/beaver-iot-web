@@ -239,6 +239,31 @@ export interface EntityAPISchema extends APISchema {
             }
         >;
     };
+
+    /** Get an AI-generated plain-English summary of one or more entities' history */
+    getAiInsight: {
+        request: {
+            entity_keys: string[];
+            /** Start time stamp, in ms */
+            start_timestamp: number;
+            /** End time stamp, in ms */
+            end_timestamp: number;
+            /** Aggregation type */
+            aggregate_type: DataAggregateType;
+            /** Whether to compare against the immediately preceding period of equal length */
+            compare_to_previous_period: boolean;
+            /** How long the backend may serve this insight from cache, in seconds */
+            cache_ttl_seconds: number;
+            /** Optional user instruction steering what the summary should focus on */
+            custom_prompt?: string;
+        };
+        response: {
+            summary: string;
+            trend: 'UP' | 'DOWN' | 'FLAT';
+            generated_at: number;
+            cached: boolean;
+        };
+    };
 }
 
 /**
@@ -260,15 +285,20 @@ export default attachAPI<EntityAPISchema>(client, {
         editEntity: `PUT ${API_PREFIX}/entity/:id`,
         createCustomEntity: `POST ${API_PREFIX}/entity`,
         getEntitiesStatus: `POST ${API_PREFIX}/entity/batch-get-status`,
+        getAiInsight: `POST ${API_PREFIX}/entity/ai-insight`,
         // exportEntityHistory: `GET ${API_PREFIX}/entity/export`,
         async exportEntityHistory({ ids, startTime, endTime, timezone }) {
+            // NOTE: `/entity/export` is a GET taking a bare POJO, so Spring binds these
+            // via WebDataBinder using the literal Java property names. The project-wide
+            // SNAKE_CASE strategy only applies to Jackson @RequestBody, so these params
+            // must stay camelCase or they silently fail to bind.
             const resp = await client.get(`${API_PREFIX}/entity/export`, {
                 responseType: 'blob',
                 params: {
                     ids,
-                    timezone,
-                    start_timestamp: startTime,
-                    end_timestamp: endTime,
+                    timeZone: timezone,
+                    startTimestamp: startTime,
+                    endTimestamp: endTime,
                 },
             });
 

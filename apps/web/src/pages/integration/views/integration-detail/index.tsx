@@ -15,7 +15,7 @@ import {
 import { usePermissionsError } from '@/hooks';
 import { genInteIconUrl } from '../../helper';
 import { type InteEntityType } from './hooks';
-import { AiContent, GeneralContent, MscContent, NSContent, MqttContent } from './components';
+import { AiContent, GeneralContent, MscContent, NSContent, MqttContent, IrivContent } from './components';
 
 import './style.less';
 
@@ -87,6 +87,9 @@ const IntegrationDetail = () => {
             }
             case 'mqtt-device': {
                 return <MqttContent entities={entityList} onUpdateSuccess={refreshInteDetail} />;
+            }
+            case 'iriv-ioc-mqtt-gateway': {
+                return <IrivContent onUpdateSuccess={refreshInteDetail} />;
             }
             default: {
                 return (

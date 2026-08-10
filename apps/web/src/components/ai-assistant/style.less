@@ -1,0 +1,201 @@
+.ms-ai-assistant {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    background: var(--main-background);
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: @padding-sm @padding-md;
+        border-bottom: 1px solid var(--border-color-base);
+    }
+
+    &__title {
+        display: flex;
+        gap: @margin-xs;
+        align-items: center;
+        font-weight: @font-weight-bold;
+        .text-size(@font-size-lg);
+
+        svg {
+            color: var(--primary-color-base);
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-shrink: 0;
+        gap: @margin-xxs;
+        align-items: center;
+    }
+
+    &__body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: @margin-md;
+        min-height: 0;
+        padding: @padding-md;
+        overflow-y: auto;
+    }
+
+    &__empty {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: @margin-xs;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        &-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: @margin-sm;
+            color: var(--primary-color-base);
+        }
+
+        &-title {
+            font-weight: @font-weight-bold;
+            .text-size(@font-size-lg);
+        }
+
+        &-desc {
+            max-width: 460px;
+            color: var(--text-color-secondary);
+        }
+    }
+
+    &__suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: @margin-xs;
+        justify-content: center;
+        margin-top: @margin-md;
+    }
+
+    &__suggestion {
+        padding: @padding-xs @padding-sm;
+        color: var(--text-color-primary);
+        background: var(--component-background);
+        border: 1px solid var(--border-color-base);
+        border-radius: @border-radius-md;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+            border-color: var(--primary-color-base);
+        }
+    }
+
+    &__msg {
+        display: flex;
+        max-width: 80%;
+
+        &--user {
+            align-self: flex-end;
+
+            .ms-ai-assistant__bubble {
+                color: var(--white);
+                background: var(--primary-color-base);
+            }
+        }
+
+        &--assistant {
+            align-self: flex-start;
+
+            .ms-ai-assistant__bubble {
+                background: var(--component-background);
+                border: 1px solid var(--border-color-base);
+            }
+        }
+
+        &--error .ms-ai-assistant__bubble {
+            color: var(--error-color-base);
+            border-color: var(--error-color-base);
+        }
+    }
+
+    &__bubble {
+        padding: @padding-sm @padding-md;
+        line-height: 1.5;
+        word-break: break-word;
+        white-space: pre-wrap;
+        border-radius: @border-radius-md;
+
+        &--loading {
+            display: flex;
+            gap: @margin-xs;
+            align-items: center;
+            color: var(--text-color-secondary);
+        }
+    }
+
+    &__tools {
+        padding-top: @margin-xs;
+        margin-top: @margin-xs;
+        color: var(--text-color-tertiary);
+        border-top: 1px dashed var(--border-color-base);
+        .text-size(@font-size-1);
+    }
+
+    &__input {
+        display: flex;
+        gap: @margin-xs;
+        align-items: flex-end;
+        padding: @padding-md;
+        border-top: 1px solid var(--border-color-base);
+    }
+
+    &__send {
+        flex-shrink: 0;
+    }
+}
+
+// ---------- Floating shell ----------
+.ms-ai-assistant-float {
+    position: fixed;
+    right: @margin-lg;
+    bottom: @margin-lg;
+    // Above page content, below MUI modals/dialogs (1300) so confirms still cover it
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    gap: @margin-sm;
+    align-items: flex-end;
+
+    &__panel {
+        display: flex;
+        flex-direction: column;
+        width: 400px;
+        // Never taller than the viewport minus the launcher and its margins
+        height: min(560px, calc(100vh - 160px));
+        overflow: hidden;
+        background: var(--main-background);
+        border: 1px solid var(--border-color-base);
+        border-radius: @border-radius-md;
+        box-shadow: @shadow-4;
+
+        .bp-down(@grid-breakpoints[sm], {
+            width: calc(100vw - @margin-lg * 2);
+            height: min(560px, calc(100vh - 140px));
+        });
+
+        // The suggestion pills wrap badly in a narrow panel
+        .ms-ai-assistant__suggestions {
+            flex-direction: column;
+        }
+
+        .ms-ai-assistant__msg {
+            max-width: 92%;
+        }
+    }
+
+    &__launcher {
+        flex-shrink: 0;
+        align-self: flex-end;
+    }
+}

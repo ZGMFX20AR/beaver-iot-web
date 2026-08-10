@@ -11,7 +11,7 @@ export function useSearch<T>(props: HoverSearchAutocompleteProps<T>) {
     const autocompleteRef = useRef<HTMLDivElement>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
-    const checkIsClearNode = useMemoizedFn((node: HTMLElement | null) => {
+    const checkIsClearNode = useMemoizedFn((node: HTMLElement | null): boolean => {
         if (!node) {
             return false;
         }

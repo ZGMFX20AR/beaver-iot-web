@@ -131,7 +131,13 @@ export const customChunkSplit: CustomChunk = ({ id }, { getModuleInfo }) => {
         return 'mui';
     }
 
-    if (id.includes('node_modules') && id.includes('react')) {
+    // Core React runtime only — do not match @emotion/react, @uiw/react-codemirror, etc.
+    // Those pull CodeMirror/Emotion into this chunk and create vendor ↔ react cycles.
+    if (
+        /[/\\]node_modules[/\\]react[/\\]/.test(id) ||
+        /[/\\]node_modules[/\\]react-dom[/\\]/.test(id) ||
+        /[/\\]node_modules[/\\]scheduler[/\\]/.test(id)
+    ) {
         return 'react';
     }
 

@@ -111,3 +111,10 @@ export {
     type MarkerChangeEvent,
     type ImageSize as MarkerImageSize,
 } from './image-marker';
+export {
+    default as FloatingAiAssistant,
+    AiAssistantChatPanel,
+    useAiAssistantStore,
+    type AiAssistantChatPanelProps,
+    type DisplayMessage as AiAssistantDisplayMessage,
+} from './ai-assistant';

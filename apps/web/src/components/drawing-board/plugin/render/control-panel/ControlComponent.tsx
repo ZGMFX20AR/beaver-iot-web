@@ -21,6 +21,7 @@ import {
     ChartMetricsSelect,
     MultiDeviceSelect,
     AlarmTimeSelect,
+    MapTileSelect,
     ChartMarkLine,
 } from '../../components';
 
@@ -147,6 +148,10 @@ const ControlComponent: React.FC<ControlComponentProps> = (props: ControlCompone
                     {...omit(commonProps, ['helperText'])}
                     {...config?.componentProps}
                 />
+            );
+        case 'MapTileSelect':
+            return (
+                <MapTileSelect {...omit(commonProps, ['helperText'])} {...config?.componentProps} />
             );
         case 'ChartMarkLine':
             return <ChartMarkLine {...omit(commonProps, ['label'])} {...config?.componentProps} />;

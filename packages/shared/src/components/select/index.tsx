@@ -45,6 +45,10 @@ type Props<T extends ApiKey> = {
      * Custom drop-down option click event
      */
     onOptionClick?: (option: OptionsProps) => void;
+    /**
+     * Placeholder shown when no option is selected
+     */
+    placeholder?: string;
 };
 
 export type SelectProps<T extends ApiKey> = Props<T> & Omit<MuiSelectProps<T>, 'error'>;
@@ -142,6 +146,7 @@ const Select = <T extends ApiKey = ApiKey>(props: SelectProps<T>) => {
                 error={!!error}
                 disabled={disabled}
                 displayEmpty={!!placeholder || displayEmpty}
+                // @ts-ignore - MUI's Select doesn't officially support `placeholder`, but does pass it through
                 placeholder={placeholder}
                 renderValue={customRenderValue}
             >

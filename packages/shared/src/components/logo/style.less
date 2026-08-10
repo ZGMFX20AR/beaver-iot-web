@@ -1,38 +1,41 @@
 .@{prefix}-logo {
-    width: 162px;
+    width: 200px;
     height: 40px;
 
     &-inner {
-        display: block;
+        display: flex;
+        align-items: center;
         height: 100%;
         overflow: hidden;
-        text-indent: -999px;
-        background: url('./assets/logo-light.svg') no-repeat;
-        background-size: 100% auto;
+    }
+
+    &-icon {
+        display: inline-block;
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        background: url('./assets/logo.png') no-repeat center;
+        background-size: contain;
+    }
+
+    &-text {
+        overflow: hidden;
+        margin-left: 8px;
+        color: var(--text-color-base);
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &-mini {
         width: 40px;
         height: 40px;
 
-        .@{prefix}-logo-inner {
-            background: url('./assets/logo-light-mini.svg') no-repeat;
-            background-size: 100% auto;
-        }
-    }
-}
-
-// Dark theme
-[data-theme='dark'] .@{prefix}-logo {
-    &-inner {
-        background: url('./assets/logo-dark.svg') no-repeat;
-        background-size: 100% auto;
-    }
-
-    &-mini {
-        .@{prefix}-logo-inner {
-            background: url('./assets/logo-dark-mini.svg') no-repeat;
-            background-size: 100% auto;
+        .@{prefix}-logo-icon {
+            width: 40px;
+            height: 40px;
         }
     }
 }

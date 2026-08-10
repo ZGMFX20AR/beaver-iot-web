@@ -32,6 +32,8 @@ import {
     EmailRecipients,
     HttpBodyInput,
     EntityDataSelect,
+    LlmModelSelect,
+    DataEditor,
     type EntityAssignSelectProps,
     type EntityMultipleSelectProps,
 } from '../components';
@@ -319,6 +321,35 @@ const useNodeFormItems = ({ nodeId, nodeType, readonly }: Props) => {
                                 formItem.render = ({ field: { onChange, value } }) => {
                                     return (
                                         <HttpBodyInput
+                                            required={required}
+                                            value={value}
+                                            onChange={onChange}
+                                        />
+                                    );
+                                };
+                                break;
+                            }
+                            case 'promptEditor': {
+                                formItem.render = ({ field: { onChange, value } }) => {
+                                    return (
+                                        <DataEditor
+                                            lang="text"
+                                            title={displayName}
+                                            readonly={readonly}
+                                            // Gives the "+" picker for inserting upstream node
+                                            // variables, so users don't hand-type #{properties...}
+                                            variableSelectable
+                                            value={value || ''}
+                                            onChange={onChange}
+                                        />
+                                    );
+                                };
+                                break;
+                            }
+                            case 'llmModelSelect': {
+                                formItem.render = ({ field: { onChange, value } }) => {
+                                    return (
+                                        <LlmModelSelect
                                             required={required}
                                             value={value}
                                             onChange={onChange}

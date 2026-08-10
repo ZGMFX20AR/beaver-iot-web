@@ -197,5 +197,6 @@ export const getTileLayerConfig = (
     };
 };
 
-export type { MapTileType, CoordType };
+export type { MapTileType, CoordType, MapType, MapServiceType };
+export { basicConfigs as mapConfigs };
 export * from './transform';

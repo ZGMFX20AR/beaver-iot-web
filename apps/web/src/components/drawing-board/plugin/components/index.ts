@@ -37,3 +37,5 @@ export {
 export { default as ChartMarkLine, type ChartMarkLineProps } from './chart-mark-line';
 
 export { default as AlarmTimeSelect } from './alarm-time-select';
+
+export { default as MapTileSelect } from './map-tile-select';

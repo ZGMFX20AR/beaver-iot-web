@@ -33,6 +33,7 @@ import { InfoOutlinedIcon } from '@milesight/shared/src/components';
 import ImageInput, { type Props as ImageInputProps } from '@/components/image-input';
 import Tooltip from '@/components/tooltip';
 import EuiInput from '@/components/eui-input';
+import PasswordInput from '@/components/password-input';
 import { type IntegrationAPISchema } from '@/services/http';
 
 export interface Props {
@@ -366,6 +367,26 @@ const useEntityFormItems = ({ entities, isAllReadOnly, imageUploadProps }: Props
                                     </FormHelperText>
                                 )}
                             </FormControl>
+                        );
+                    }
+
+                    // If it is a password type, rendered as a masked input with a show/hide toggle
+                    if (attr.format === 'PASSWORD') {
+                        formItem.render = ({
+                            field: { onChange, value, disabled },
+                            fieldState: { error },
+                        }) => (
+                            <PasswordInput
+                                fullWidth
+                                sx={{ my: 1.5 }}
+                                required={!attr.optional}
+                                disabled={disabled}
+                                label={renderLabel(name, description)}
+                                error={!!error}
+                                helperText={error ? error.message : null}
+                                value={value}
+                                onChange={onChange}
+                            />
                         );
                     }
 

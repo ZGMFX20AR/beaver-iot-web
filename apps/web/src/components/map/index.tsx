@@ -111,9 +111,12 @@ const Map = forwardRef<MapInstance, MapProps>(
 
         useDebounceEffect(
             () => {
-                setMapKey(`${width}-${height}`);
+                // `type` is part of the key because switching provider can change the CRS and
+                // zoom bounds, which Leaflet only reads when the map is constructed. Without a
+                // remount the tile url would swap but the projection would stay stale.
+                setMapKey(`${width}-${height}-${type}`);
             },
-            [width, height],
+            [width, height, type],
             { wait: 300, leading: true },
         );
 

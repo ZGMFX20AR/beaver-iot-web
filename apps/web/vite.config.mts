@@ -136,6 +136,25 @@ export default defineConfig({
         alias: {
             '@': path.resolve(__dirname, 'src'), // src path alias
         },
+        // CodeMirror uses instanceof checks; multiple copies of these packages break the editor
+        dedupe: [
+            '@codemirror/state',
+            '@codemirror/view',
+            '@codemirror/language',
+            '@codemirror/autocomplete',
+            '@codemirror/commands',
+            '@codemirror/lint',
+            '@codemirror/search',
+            '@uiw/react-codemirror',
+        ],
+    },
+    optimizeDeps: {
+        include: [
+            '@codemirror/state',
+            '@codemirror/view',
+            '@codemirror/language',
+            '@uiw/react-codemirror',
+        ],
     },
 
     define: runtimeVariables,

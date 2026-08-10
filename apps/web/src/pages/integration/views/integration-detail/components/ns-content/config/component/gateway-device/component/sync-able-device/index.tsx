@@ -15,7 +15,7 @@ import {
     DeviceModelItem,
 } from '@/services/http';
 import { paginationList } from '../../../../utils/utils';
-import useColumns, { TableRowDataType } from './hook/useColumn';
+import useColumns, { TableRowDataType, isOfflineTimeoutValid } from './hook/useColumn';
 
 import './style.less';
 
@@ -47,6 +47,8 @@ const SyncAbleDevice: React.FC<IProps> = props => {
 
     // select device model map
     const [modelMap, setModelMap] = useState<Map<string, string>>(new Map());
+    // per-device offline timeout (minutes) map, raw input strings keyed by eui
+    const [offlineTimeoutMap, setOfflineTimeoutMap] = useState<Map<string, string>>(new Map());
 
     const deviceData = useMemo(() => {
         const { page, pageSize } = paginationModel;
@@ -115,6 +117,14 @@ const SyncAbleDevice: React.FC<IProps> = props => {
             toast.error(getIntlText('setting.integration.sync_device_empty_model'));
             return;
         }
+        // invalid offline timeout among selected devices
+        const invalidOfflineTimeout = deviceData?.content
+            .filter((item: TableRowDataType) => selectedIds.includes(item.eui))
+            .filter((item: TableRowDataType) => !isOfflineTimeoutValid(offlineTimeoutMap.get(item.eui)));
+        if (invalidOfflineTimeout?.length) {
+            toast.error(getIntlText('setting.integration.sync_device_invalid_offline_timeout'));
+            return;
+        }
         confirm({
             title: getIntlText('setting.integration.message.sync_device_title'),
             description: getIntlText('setting.integration.message.sync_device_tip'),
@@ -123,10 +133,14 @@ const SyncAbleDevice: React.FC<IProps> = props => {
             onConfirm: async () => {
                 const syncDevices = deviceData?.content
                     .filter((item: TableRowDataType) => selectedIds.includes(item.eui))
-                    .map((item: TableRowDataType) => ({
-                        eui: item.eui,
-                        model_id: modelMap?.get(item.eui) || item.guessModelId || '',
-                    }));
+                    .map((item: TableRowDataType) => {
+                        const rawTimeout = offlineTimeoutMap.get(item.eui);
+                        return {
+                            eui: item.eui,
+                            model_id: modelMap?.get(item.eui) || item.guessModelId || '',
+                            offline_timeout: rawTimeout ? Number(rawTimeout) : undefined,
+                        };
+                    });
 
                 const [error, resp] = await awaitWrap(
                     embeddedNSApi.syncDevices({
@@ -142,11 +156,12 @@ const SyncAbleDevice: React.FC<IProps> = props => {
                 onUpdateSuccess?.();
                 refreshTable();
                 setModelMap(new Map());
+                setOfflineTimeoutMap(new Map());
                 setSelectedIds([]);
                 toast.success(getIntlText('setting.integration.message.device_sync_success'));
             },
         });
-    }, [confirm, getIntlText, getDevicesList, selectedIds, modelMap]);
+    }, [confirm, getIntlText, getDevicesList, selectedIds, modelMap, offlineTimeoutMap]);
 
     // ---------- Table rendering related to ----------
     const toolbarRender = useMemo(() => {
@@ -170,6 +185,8 @@ const SyncAbleDevice: React.FC<IProps> = props => {
         selectedIds,
         modelMap,
         setModelMap,
+        offlineTimeoutMap,
+        setOfflineTimeoutMap,
     });
 
     return (

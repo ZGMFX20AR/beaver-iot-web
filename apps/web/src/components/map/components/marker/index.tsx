@@ -23,6 +23,12 @@ interface BMarkerProps extends Omit<MarkerProps, 'eventHandlers'> {
     /** Marker size */
     size?: SizeType;
 
+    /**
+     * Emit a repeating pulse from the marker's anchor point, conveying that the
+     * device is reporting. Off by default so static maps stay still.
+     */
+    pulse?: boolean;
+
     /** Popup content */
     popup?: React.ReactNode;
 
@@ -56,10 +62,12 @@ const genLocationIcon = ({
     color,
     colorType,
     size = 'large',
+    pulse = false,
 }: {
     color?: string;
     colorType: ColorType;
     size?: SizeType;
+    pulse?: boolean;
 }) => {
     const sizeValue = sizeMap[size];
     const anchorY = -(sizeValue / 4 + sizeValue / 2 + 4);
@@ -69,8 +77,10 @@ const genLocationIcon = ({
             'ms-map-marker-root',
             `ms-map-marker-${size}`,
             `ms-map-marker-color-${colorType}`,
+            { 'ms-map-marker-pulsing': pulse },
         ),
         html: `
+${pulse ? '<span class="ms-map-marker-pulse" aria-hidden="true"></span>' : ''}
 <svg
     xmlns="http://www.w3.org/2000/svg"
     className="ms-map-marker-icon"
@@ -97,6 +107,7 @@ const BMarker = forwardRef<MarkerInstance, BMarkerProps>(
         {
             size = 'large',
             colorType = 'info',
+            pulse = false,
             position,
             popup,
             popupProps,
@@ -140,7 +151,7 @@ const BMarker = forwardRef<MarkerInstance, BMarkerProps>(
                 {...props}
                 ref={markerRef}
                 position={position}
-                icon={genLocationIcon({ size, colorType })}
+                icon={genLocationIcon({ size, colorType, pulse })}
                 eventHandlers={{
                     ...events,
                     move(e) {

@@ -4,14 +4,17 @@ import { isEmpty, get } from 'lodash-es';
 import cls from 'classnames';
 
 import Leaf, { type LatLngTuple } from 'leaflet';
+import { Polyline } from 'react-leaflet';
 
 import { useTheme } from '@milesight/shared/src/hooks';
 
 import { Map, MapMarker, type MapInstance, type MarkerInstance } from '@/components';
 import { PluginFullscreenContext } from '@/components/drawing-board/components';
 import { type DeviceDetail } from '@/services/http';
+import { type MapTileType } from '@/services/map';
 import DevicePopup from '../device-popup';
 import { MapContext } from '../../context';
+import { DEFAULT_MAP_TILE_TYPE } from '../../../control-panel';
 import Alarm from '../alarm';
 
 export interface MapDataProps extends DeviceDetail {
@@ -20,6 +23,13 @@ export interface MapDataProps extends DeviceDetail {
 
 export interface BaseMapProps {
     title?: string;
+    /** Recent movement path per device key */
+    trails?: Record<string, LatLngTuple[]>;
+    /**
+     * Base layer to render. Falls back to the default for widgets saved
+     * before the layer became configurable.
+     */
+    tileType?: MapTileType;
     selectDevice?: DeviceDetail | null;
     devices?: DeviceDetail[];
     showMobileSearch?: boolean;
@@ -27,7 +37,8 @@ export interface BaseMapProps {
 }
 
 const BaseMap: React.FC<BaseMapProps> = props => {
-    const { title, selectDevice, devices, showMobileSearch, cancelSelectDevice } = props;
+    const { title, tileType, trails, selectDevice, devices, showMobileSearch, cancelSelectDevice } =
+        props;
 
     const { matchTablet, matchLandscape } = useTheme();
     const mapContext = useContext(MapContext);
@@ -243,6 +254,7 @@ const BaseMap: React.FC<BaseMapProps> = props => {
                 <Map
                     touchZoom="center"
                     scrollWheelZoom="center"
+                    type={tileType || DEFAULT_MAP_TILE_TYPE}
                     ref={mapRef}
                     width={size.width}
                     height={size.height}
@@ -256,10 +268,36 @@ const BaseMap: React.FC<BaseMapProps> = props => {
                         }, 100);
                     }}
                 >
+                    {mapData.map(d => {
+                        const trail = trails?.[d.key];
+                        if (!trail?.length) return null;
+                        return (
+                            <Polyline
+                                key={`trail-${d.id}`}
+                                positions={trail}
+                                // The path is already interpolated, so stop Leaflet
+                                // simplifying the curve back into straight runs.
+                                smoothFactor={0}
+                                pathOptions={{
+                                    color: 'var(--primary-color-base)',
+                                    weight: 4,
+                                    opacity: 0.75,
+                                    // Zero-length dashes with round caps render as dots.
+                                    dashArray: '1 10',
+                                    lineCap: 'round',
+                                    lineJoin: 'round',
+                                }}
+                            />
+                        );
+                    })}
+
                     {mapData.map(d => (
                         <MapMarker
                             key={d.id}
                             colorType={getColorType?.(d)}
+                            // A heartbeat only makes sense for a device still reporting;
+                            // offline ones stay static.
+                            pulse={getColorType?.(d) !== 'disabled'}
                             position={d.latLng}
                             size={get(markerPopupStatus, String(d?.id), false) ? 'large' : 'small'}
                             popup={<DevicePopup device={d} closeMarkerPopup={closeMarkerPopup} />}

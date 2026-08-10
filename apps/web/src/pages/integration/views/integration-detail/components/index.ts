@@ -3,3 +3,4 @@ export { default as GeneralContent } from './general-content';
 export { default as NSContent } from './ns-content';
 export { default as AiContent } from './ai-content';
 export { default as MqttContent } from './mqtt-content';
+export { default as IrivContent } from './iriv-content';

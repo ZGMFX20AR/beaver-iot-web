@@ -10,6 +10,7 @@ import {
     SettingsIcon,
     SellIcon,
     AntFallAttentionIcon,
+    AutoAwesomeIcon,
 } from '@milesight/shared/src/components';
 import { PERMISSIONS } from '@/constants';
 import ErrorBoundaryComponent from './error-boundary';
@@ -208,6 +209,24 @@ const routes: RouteObjectType[] = [
                 ErrorBoundary,
             },
         ],
+    },
+    {
+        path: '/ai-assistant',
+        handle: {
+            get title() {
+                return intl.get('ai_assistant.title');
+            },
+            icon: <AutoAwesomeIcon fontSize="small" />,
+            permissions: PERMISSIONS.DASHBOARD_MODULE,
+            // Reached through the floating widget rather than the menu; the route stays
+            // available as a full-screen view and for existing links
+            hideInMenuBar: true,
+        },
+        async lazy() {
+            const { default: Component } = await import('@/pages/ai-assistant');
+            return { Component };
+        },
+        ErrorBoundary,
     },
     {
         path: '/tag',

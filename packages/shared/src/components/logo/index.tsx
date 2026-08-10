@@ -19,14 +19,21 @@ interface Props {
 /**
  * Logo component
  */
-const Logo: React.FC<Props> = ({ to, mini, className, placeholder = 'Milesight' }) => {
+const Logo: React.FC<Props> = ({ to, mini, className, placeholder = 'Cytron Technologies' }) => {
+    const content = (
+        <>
+            <span className="ms-logo-icon" />
+            {!mini && <span className="ms-logo-text">{placeholder}</span>}
+        </>
+    );
+
     return (
         <h3 className={cls('ms-logo', className, { 'ms-logo-mini': mini })}>
             {!to ? (
-                <span className="ms-logo-inner">{placeholder}</span>
+                <span className="ms-logo-inner">{content}</span>
             ) : (
                 <Link className="ms-logo-inner" to={to}>
-                    {placeholder}
+                    {content}
                 </Link>
             )}
         </h3>

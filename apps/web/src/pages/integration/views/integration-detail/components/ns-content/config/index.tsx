@@ -10,7 +10,13 @@ import { awaitWrap, isRequestSuccess, embeddedNSApi, getResponseData } from '@/s
 import useColumns, { TableRowDataType, UseColumnsProps } from './hook/useColumn';
 import { InteEntityType } from '../../../hooks';
 import { paginationList } from './utils/utils';
-import { GatewayDetail, GatewayDevices, CodecRepo, AddGateway } from './component';
+import {
+    GatewayDetail,
+    GatewayDevices,
+    CodecRepo,
+    AddGateway,
+    CustomDeviceModel,
+} from './component';
 
 import './style.less';
 
@@ -38,6 +44,7 @@ const Config: React.FC<IProps> = ({ entities, onUpdateSuccess }) => {
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
     const [selectedIds, setSelectedIds] = useState<readonly ApiKey[]>([]);
     const [codecOpen, setCodecOpen] = useState<boolean>(false);
+    const [customModelOpen, setCustomModelOpen] = useState<boolean>(false);
 
     const {
         data: gatewaysData,
@@ -142,6 +149,14 @@ const Config: React.FC<IProps> = ({ entities, onUpdateSuccess }) => {
                 </Button> */}
                 <Button
                     variant="outlined"
+                    sx={{ textTransform: 'none' }}
+                    startIcon={<CodeIcon fontSize="small" />}
+                    onClick={() => setCustomModelOpen(true)}
+                >
+                    {getIntlText('setting.integration.custom_model_title')}
+                </Button>
+                <Button
+                    variant="outlined"
                     disabled={!selectedIds.length}
                     sx={{ textTransform: 'none' }}
                     startIcon={<DeleteOutlineIcon />}
@@ -233,6 +248,12 @@ const Config: React.FC<IProps> = ({ entities, onUpdateSuccess }) => {
                     visible={codecOpen}
                     entities={entities}
                     onCancel={() => setCodecOpen(false)}
+                    onUpdateSuccess={onUpdateSuccess}
+                />
+            )}
+            {customModelOpen && (
+                <CustomDeviceModel
+                    onCancel={() => setCustomModelOpen(false)}
                     onUpdateSuccess={onUpdateSuccess}
                 />
             )}
