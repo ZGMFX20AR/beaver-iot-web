@@ -3,7 +3,7 @@ export interface ViewConfigProps {
     entities: EntityOptionType[];
     time: number;
     aggregateType: DataAggregateType;
-    compareToPreviousPeriod: boolean;
+    compareToPreviousPeriod: 'true' | 'false';
     refreshInterval: number;
     customPrompt?: string;
     [key: string]: any;

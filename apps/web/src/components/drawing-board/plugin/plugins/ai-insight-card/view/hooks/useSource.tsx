@@ -43,7 +43,7 @@ export const useSource = (props: UseSourceProps) => {
                     start_timestamp: now - time,
                     end_timestamp: now,
                     aggregate_type: aggregateType || 'AVG',
-                    compare_to_previous_period: Boolean(compareToPreviousPeriod),
+                    compare_to_previous_period: compareToPreviousPeriod === 'true',
                     cache_ttl_seconds: refreshInterval || 3600,
                     custom_prompt: customPrompt || undefined,
                 }),

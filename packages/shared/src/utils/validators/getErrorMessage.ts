@@ -224,7 +224,7 @@ const getErrorMessage = (key: EErrorMessages | string, options?: Record<string, 
     // if (!intlInstance) {
     //     throw Error('Please init intlInstance first.');
     // }
-    return intl.get(key, options).d('error');
+    return intl.get(key, options || {}).d('error');
 };
 
 export default getErrorMessage;

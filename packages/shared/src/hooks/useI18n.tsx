@@ -47,7 +47,7 @@ export default () => {
 
     const getIntlText = useCallback(
         (key: string, options?: Record<number | string, any>) => {
-            return intl.get(key, options).d(key);
+            return intl.get(key, options || {}).d(key);
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [lang],
@@ -55,7 +55,7 @@ export default () => {
 
     const getIntlHtml = useCallback(
         (key: string, options?: Record<number | string, any>) => {
-            return intl.getHTML(key, options);
+            return intl.getHTML(key, options || {});
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [lang],

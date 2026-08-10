@@ -102,6 +102,7 @@ const { loadI18nComplete } = (() => {
 
             if (!isLoadFinished && !locale) return '';
 
+            // @ts-ignore
             return originalIntlGet.apply(intl, params);
         };
 

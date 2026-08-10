@@ -54,5 +54,5 @@ export const hexToRgba = (hex: string, alpha: number) => {
  * Text internationalization translation
  */
 export const t = (key: string, options?: Record<number | string, any>) => {
-    return intl.get(key, options).d(key);
+    return intl.get(key, options || {}).d(key);
 };

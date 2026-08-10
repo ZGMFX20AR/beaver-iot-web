@@ -155,7 +155,7 @@ export const getApiErrorInfos = (response?: ApiResponse): string[] => {
     errorData.forEach(data => {
         if (data?.errorCode) {
             result.push(
-                intl.get(`${HTTP_ERROR_CODE_PREFIX}${data.errorCode}`, data.args).d(data.errorCode),
+                intl.get(`${HTTP_ERROR_CODE_PREFIX}${data.errorCode}`, data.args || {}).d(data.errorCode),
             );
         }
     });

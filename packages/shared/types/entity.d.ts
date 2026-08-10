@@ -109,8 +109,9 @@ declare interface EntityValueAttributeType {
      * @template IMAGE Image, format `IMAGE`
      * @template `IMAGE:URL` Image URL, format `IMAGE:URL`
      * @template `IMAGE:BASE64` Image Base64, format `IMAGE:BASE64`
+     * @template PASSWORD Password, rendered as a masked input with a show/hide toggle
      */
-    format: 'HEX' | `REGEX:${string}` | 'IMAGE' | 'IMAGE:URL' | 'IMAGE:BASE64';
+    format: 'HEX' | `REGEX:${string}` | 'IMAGE' | 'IMAGE:URL' | 'IMAGE:BASE64' | 'PASSWORD';
     /** Fraction Digits */
     fraction_digits: number;
     /** Optional */

@@ -8,7 +8,7 @@ export interface AiInsightCardControlPanelProps {
     entities: EntityOptionType[];
     time: number;
     aggregateType: DataAggregateType;
-    compareToPreviousPeriod: boolean;
+    compareToPreviousPeriod: 'true' | 'false';
     refreshInterval: number;
     customPrompt?: string;
 }
@@ -129,12 +129,12 @@ const aiInsightCardControlPanelConfig = (): ControlPanelConfig<AiInsightCardCont
                             label: t('dashboard.label_ai_insight_compare_previous_period'),
                             controllerProps: {
                                 name: 'compareToPreviousPeriod',
-                                defaultValue: true,
+                                defaultValue: 'true',
                             },
                             componentProps: {
                                 options: [
-                                    { label: t('dashboard.switch_title_on'), value: true },
-                                    { label: t('dashboard.switch_title_off'), value: false },
+                                    { label: t('dashboard.switch_title_on'), value: 'true' },
+                                    { label: t('dashboard.switch_title_off'), value: 'false' },
                                 ],
                             },
                         },

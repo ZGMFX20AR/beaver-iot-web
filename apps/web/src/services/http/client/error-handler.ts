@@ -133,7 +133,7 @@ const handler: ErrorHandlerConfig['handler'] = (errCode, resp) => {
         const errorArgs = isPlainObject(resp?.data?.data)
             ? (resp.data.data as Record<string, any>)
             : undefined;
-        const message = intl.get(intlKey, errorArgs) || intl.get(serverErrorKey);
+        const message = intl.get(intlKey, errorArgs || {}) || intl.get(serverErrorKey);
 
         toast.error({ key: errCode, content: message });
         return;
