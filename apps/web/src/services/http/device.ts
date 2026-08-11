@@ -275,6 +275,18 @@ export interface DeviceAPISchema extends APISchema {
         };
         response: void;
     };
+    /**
+     * Create any entities the device's template currently defines but the device doesn't
+     * have yet - for devices created before fields were added to their model. Existing
+     * entities are untouched. Response is the identifiers of whatever got newly created,
+     * empty if the device was already up to date.
+     */
+    resyncEntities: {
+        request: {
+            id: ApiKey;
+        };
+        response: string[];
+    };
     /** Get device alarms */
     getDeviceAlarms: {
         request: SearchRequestType & AlarmSearchCondition;
@@ -332,6 +344,7 @@ export default attachAPI<DeviceAPISchema>(client, {
         setLocation: `PUT ${API_PREFIX}/device/:id/location`,
         getLocation: `GET ${API_PREFIX}/device/:id/location`,
         clearLocation: `POST ${API_PREFIX}/device/:id/clear-location`,
+        resyncEntities: `POST ${API_PREFIX}/device/:id/resync-entities`,
         getDeviceAlarms: `POST ${API_PREFIX}/alarms/search`,
         async exportDeviceAlarms(params) {
             const resp = await client.get(`${API_PREFIX}/alarms/export`, {

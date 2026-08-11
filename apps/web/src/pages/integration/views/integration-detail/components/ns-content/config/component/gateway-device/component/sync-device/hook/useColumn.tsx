@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { Stack, IconButton } from '@mui/material';
 import { useI18n, useTime } from '@milesight/shared/src/hooks';
-import { DeleteOutlineIcon } from '@milesight/shared/src/components';
+import { DeleteOutlineIcon, SyncIcon } from '@milesight/shared/src/components';
 import { Tooltip, type ColumnType } from '@/components';
 import { GatewayAPISchema } from '@/services/http/embedded-ns';
 
-type OperationType = 'device' | 'detail' | 'delete';
+type OperationType = 'device' | 'detail' | 'delete' | 'resyncEntities';
 
 export type TableRowDataType = ObjectToCamelCase<
     GatewayAPISchema['getSyncedDevices']['response'][0]
@@ -62,6 +62,14 @@ const useColumns = <T extends TableRowDataType>({ onButtonClick }: UseColumnsPro
                             spacing="4px"
                             sx={{ height: '100%', alignItems: 'center', justifyContent: 'end' }}
                         >
+                            <Tooltip title={getIntlText('device.tip.resync_entities')}>
+                                <IconButton
+                                    sx={{ width: 30, height: 30 }}
+                                    onClick={() => onButtonClick('resyncEntities', row)}
+                                >
+                                    <SyncIcon sx={{ width: 20, height: 20 }} />
+                                </IconButton>
+                            </Tooltip>
                             <Tooltip title={getIntlText('common.label.delete')}>
                                 <IconButton
                                     // color="error"

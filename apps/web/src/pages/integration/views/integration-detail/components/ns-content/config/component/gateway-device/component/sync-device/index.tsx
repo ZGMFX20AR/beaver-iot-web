@@ -102,6 +102,29 @@ const SyncedDevice: React.FC<IProps> = props => {
         [confirm, getIntlText, getDevicesList, selectedIds],
     );
 
+    // ---------- Resync entities related to ----------
+    const handleResyncEntities = useCallback(
+        async (id: ApiKey) => {
+            const [error, resp] = await awaitWrap(deviceAPI.resyncEntities({ id }));
+
+            if (error || !isRequestSuccess(resp)) {
+                return;
+            }
+
+            const newEntityIds = getResponseData(resp) || [];
+            if (newEntityIds.length) {
+                toast.success(
+                    getIntlText('device.message.resync_entities_success', {
+                        1: newEntityIds.length,
+                    }),
+                );
+            } else {
+                toast.success(getIntlText('device.message.resync_entities_up_to_date'));
+            }
+        },
+        [getIntlText],
+    );
+
     // ---------- Table rendering related to ----------
     const toolbarRender = useMemo(() => {
         return (
@@ -126,12 +149,16 @@ const SyncedDevice: React.FC<IProps> = props => {
                     handleDeleteConfirm([record.id]);
                     break;
                 }
+                case 'resyncEntities': {
+                    handleResyncEntities(record.id);
+                    break;
+                }
                 default: {
                     break;
                 }
             }
         },
-        [handleDeleteConfirm],
+        [handleDeleteConfirm, handleResyncEntities],
     );
 
     const columns = useColumns<TableRowDataType>({ onButtonClick: handleTableBtnClick });

@@ -6,12 +6,13 @@ import {
     ListAltIcon,
     DeleteOutlineIcon,
     DriveFileMoveOutlinedIcon,
+    SyncIcon,
 } from '@milesight/shared/src/components';
 import { Tooltip, PermissionControlHidden, DeviceStatus, type ColumnType } from '@/components';
 import { type DeviceAPISchema } from '@/services/http';
 import { PERMISSIONS } from '@/constants';
 
-type OperationType = 'detail' | 'delete' | 'changeGroup';
+type OperationType = 'detail' | 'delete' | 'changeGroup' | 'resyncEntities';
 
 export type TableRowDataType = ObjectToCamelCase<
     DeviceAPISchema['getList']['response']['content'][0]
@@ -103,7 +104,7 @@ const useColumns = <T extends TableRowDataType>({
             {
                 field: '$operation',
                 headerName: getIntlText('common.label.operation'),
-                width: 120,
+                width: 156,
                 display: 'flex',
                 align: 'left',
                 headerAlign: 'left',
@@ -131,6 +132,17 @@ const useColumns = <T extends TableRowDataType>({
                                         onClick={() => onButtonClick('changeGroup', row)}
                                     >
                                         <DriveFileMoveOutlinedIcon sx={{ width: 20, height: 20 }} />
+                                    </IconButton>
+                                </Tooltip>
+                            </PermissionControlHidden>
+                            <PermissionControlHidden permissions={PERMISSIONS.DEVICE_EDIT}>
+                                <Tooltip title={getIntlText('device.tip.resync_entities')}>
+                                    <IconButton
+                                        sx={{ width: 30, height: 30 }}
+                                        onDoubleClick={e => e.stopPropagation()}
+                                        onClick={() => onButtonClick('resyncEntities', row)}
+                                    >
+                                        <SyncIcon sx={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 </Tooltip>
                             </PermissionControlHidden>
