@@ -1,0 +1,43 @@
+.ms-test-codec-panel {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color-base, #fff);
+    border: 1px solid var(--border-color-base);
+    border-radius: @border-radius-base;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    &.open {
+        z-index: 10;
+        opacity: 1;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: @padding-sm @padding-md;
+        font-weight: @font-weight-bold;
+        color: var(--text-color-base);
+        border-bottom: 1px solid var(--border-color-base);
+    }
+
+    &__body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: @margin-sm;
+        padding: @padding-md;
+        overflow: auto;
+    }
+
+    &__output {
+        height: 200px;
+        overflow: hidden;
+        border: 1px solid var(--border-color-base);
+        border-radius: @border-radius-base;
+    }
+}

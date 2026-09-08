@@ -10,7 +10,13 @@ import {
 } from '@mui/material';
 
 import { useI18n } from '@milesight/shared/src/hooks';
-import { Modal, toast, AddIcon, DeleteOutlineIcon } from '@milesight/shared/src/components';
+import {
+    Modal,
+    toast,
+    AddIcon,
+    DeleteOutlineIcon,
+    PlayArrowIcon,
+} from '@milesight/shared/src/components';
 import { CodeEditor } from '@/components';
 import {
     awaitWrap,
@@ -21,6 +27,7 @@ import {
     type CustomDeviceModelValueType,
     type LoraClassType,
 } from '@/services/http';
+import TestCodecPanel from './test-codec-panel';
 
 import './style.less';
 
@@ -66,6 +73,7 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
     const [entities, setEntities] = useState<CustomDeviceModelEntity[]>([emptyEntity()]);
     const [submitting, setSubmitting] = useState(false);
     const [showErrors, setShowErrors] = useState(false);
+    const [testPanelOpen, setTestPanelOpen] = useState(false);
 
     /**
      * Hydrate the form when editing. The server decomposes the stored template back into
@@ -293,9 +301,23 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
                     {getIntlText('setting.integration.custom_model_add_entity')}
                 </Button>
 
-                <div className="ms-custom-device-model-editor__section-title">
-                    {getIntlText('setting.integration.custom_model_decoder')}
-                </div>
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    className="ms-custom-device-model-editor__section-title"
+                >
+                    <span>{getIntlText('setting.integration.custom_model_decoder')}</span>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        startIcon={<PlayArrowIcon />}
+                        disabled={!codecCode.trim()}
+                        onClick={() => setTestPanelOpen(true)}
+                    >
+                        {getIntlText('setting.integration.custom_model_test_codec')}
+                    </Button>
+                </Stack>
 
                 <TextField
                     fullWidth
@@ -305,12 +327,20 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
                     onChange={e => setCodecEntry(e.target.value)}
                 />
 
-                <div className="ms-custom-device-model-editor__code">
-                    <CodeEditor
-                        editorLang="js"
-                        renderHeader={() => null}
-                        value={codecCode}
-                        onChange={setCodecCode}
+                <div className="ms-custom-device-model-editor__code-area">
+                    <div className="ms-custom-device-model-editor__code">
+                        <CodeEditor
+                            editorLang="js"
+                            renderHeader={() => null}
+                            value={codecCode}
+                            onChange={setCodecCode}
+                        />
+                    </div>
+                    <TestCodecPanel
+                        open={testPanelOpen}
+                        onClose={() => setTestPanelOpen(false)}
+                        codecCode={codecCode}
+                        codecEntry={codecEntry.trim() || DEFAULT_CODEC_ENTRY}
                     />
                 </div>
 

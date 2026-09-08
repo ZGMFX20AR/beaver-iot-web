@@ -242,6 +242,25 @@ export interface GatewayAPISchema extends APISchema {
         request: { identifier: string };
         response: void;
     };
+
+    /**
+     * Decode a sample payload with an in-progress (possibly unsaved) codec - nothing
+     * is persisted, so this can be called freely while iterating on the code before
+     * saving the model or adding a real device.
+     */
+    testCustomDeviceModelCodec: {
+        request: {
+            codec_code: string;
+            codec_entry?: string;
+            payload_hex?: string;
+            f_port?: number;
+        };
+        response: {
+            success: boolean;
+            output?: Record<string, any>;
+            error_message?: string;
+        };
+    };
 }
 
 /**
@@ -292,5 +311,6 @@ export default attachAPI<GatewayAPISchema>(client, {
                 ...options,
             });
         },
+        testCustomDeviceModelCodec: `POST ${API_PREFIX}/milesight-gateway/custom-device-models/test-codec`,
     },
 });
