@@ -39,6 +39,18 @@
         border: 1px solid var(--border-color-base);
         border-radius: @border-radius-base;
 
+        // This wrapper is a flex item of __body's flex column. Per the flexbox spec,
+        // a flex item's automatic minimum size is treated as 0 - not its content's
+        // size - whenever it has overflow other than visible, which this wrapper
+        // does (overflow: hidden, needed to clip the editor's own border-radius).
+        // Without flex-shrink: 0, that lets the flex layout squeeze this wrapper
+        // down to ~0 height whenever __body is short on space, which then clips the
+        // 200px-tall .ms-code-editor child completely out of view: the editor was
+        // verified via devtools to genuinely render its 200px box with the correct
+        // JSON text, positioned right after this wrapper - it was this wrapper
+        // collapsing around it, not the editor itself, that hid it.
+        flex-shrink: 0;
+
         // CodeEditor has no default height of its own - it must be set on its own
         // root class directly, not just on this wrapper (matching the same
         // convention the Workflow test-drawer's output editor relies on). Without
