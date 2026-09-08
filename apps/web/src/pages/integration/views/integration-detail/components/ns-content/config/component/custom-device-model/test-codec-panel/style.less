@@ -35,9 +35,17 @@
     }
 
     &__output {
-        height: 200px;
         overflow: hidden;
         border: 1px solid var(--border-color-base);
         border-radius: @border-radius-base;
+
+        // CodeEditor has no default height of its own - it must be set on its own
+        // root class directly, not just on this wrapper (matching the same
+        // convention the Workflow test-drawer's output editor relies on). Without
+        // this, the editor mounts with zero height: invisible, no error, nothing
+        // to see - exactly what happened before this fix.
+        .ms-code-editor {
+            height: 200px;
+        }
     }
 }
