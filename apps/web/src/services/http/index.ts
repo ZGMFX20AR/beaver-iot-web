@@ -43,6 +43,7 @@ export {
 
 export {
     default as embeddedNSApi,
+    type GatewayAPISchema,
     type SyncedDeviceType,
     type SyncAbleDeviceType,
     type DeviceModelItem,

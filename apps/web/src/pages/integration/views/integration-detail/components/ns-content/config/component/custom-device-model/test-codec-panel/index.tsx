@@ -3,10 +3,23 @@ import cls from 'classnames';
 import { useRequest } from 'ahooks';
 import { IconButton, Button, Divider, Alert, TextField, Stack } from '@mui/material';
 import { useI18n } from '@milesight/shared/src/hooks';
-import { CloseIcon, PlayArrowIcon, CheckCircleIcon, ErrorIcon } from '@milesight/shared/src/components';
+import {
+    CloseIcon,
+    PlayArrowIcon,
+    CheckCircleIcon,
+    ErrorIcon,
+} from '@milesight/shared/src/components';
 import { CodeEditor } from '@/components';
-import { embeddedNSApi, awaitWrap, getResponseData, isRequestSuccess } from '@/services/http';
+import {
+    embeddedNSApi,
+    awaitWrap,
+    getResponseData,
+    isRequestSuccess,
+    type GatewayAPISchema,
+} from '@/services/http';
 import './style.less';
+
+type TestCodecResult = GatewayAPISchema['testCustomDeviceModelCodec']['response'];
 
 export interface TestCodecPanelProps {
     open: boolean;
@@ -21,7 +34,12 @@ export interface TestCodecPanelProps {
  * unsaved) code, so they can confirm it actually works before saving the model or
  * adding a real device. Nothing here is persisted.
  */
-const TestCodecPanel: React.FC<TestCodecPanelProps> = ({ open, onClose, codecCode, codecEntry }) => {
+const TestCodecPanel: React.FC<TestCodecPanelProps> = ({
+    open,
+    onClose,
+    codecCode,
+    codecEntry,
+}) => {
     const { getIntlText } = useI18n();
     const [payloadHex, setPayloadHex] = useState('');
     const [fPort, setFPort] = useState('1');
@@ -30,19 +48,37 @@ const TestCodecPanel: React.FC<TestCodecPanelProps> = ({ open, onClose, codecCod
         loading,
         data: testResult,
         run: runTest,
+        mutate,
     } = useRequest(
-        async () => {
-            const [error, resp] = await awaitWrap(
-                embeddedNSApi.testCustomDeviceModelCodec({
-                    codec_code: codecCode,
-                    codec_entry: codecEntry,
-                    payload_hex: payloadHex,
-                    f_port: Number(fPort) || 0,
-                }),
-            );
+        // Every path returns a result and nothing is allowed to throw: ahooks keeps the
+        // previous `data` when a request rejects (it only sets `error`), so returning
+        // undefined or throwing here would leave the *last* run's output on screen with
+        // no indication it's stale - which reads as "the test only runs once, the result
+        // never changes" rather than as the failure it actually is.
+        async (): Promise<TestCodecResult> => {
+            try {
+                const [error, resp] = await awaitWrap(
+                    embeddedNSApi.testCustomDeviceModelCodec({
+                        codec_code: codecCode,
+                        codec_entry: codecEntry,
+                        payload_hex: payloadHex,
+                        f_port: Number(fPort) || 0,
+                    }),
+                );
+                const data = !error && isRequestSuccess(resp) ? getResponseData(resp) : undefined;
 
-            if (error || !isRequestSuccess(resp)) return;
-            return getResponseData(resp);
+                return (
+                    data ?? {
+                        success: false,
+                        error_message: getIntlText('error.http.server_error'),
+                    }
+                );
+            } catch (e) {
+                return {
+                    success: false,
+                    error_message: (e as Error)?.message || getIntlText('error.http.server_error'),
+                };
+            }
         },
         { manual: true },
     );
@@ -77,7 +113,12 @@ const TestCodecPanel: React.FC<TestCodecPanelProps> = ({ open, onClose, codecCod
                     className="ms-test-codec-panel__run-btn"
                     disabled={loading || !codecCode.trim()}
                     startIcon={<PlayArrowIcon />}
-                    onClick={() => runTest()}
+                    onClick={() => {
+                        // Drop the previous result before starting, so a run in flight
+                        // never shows the last run's output as if it were this one's.
+                        mutate(undefined);
+                        runTest();
+                    }}
                 >
                     {getIntlText('common.label.run')}
                 </Button>
