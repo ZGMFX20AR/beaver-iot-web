@@ -114,8 +114,16 @@ const TestCodecPanel: React.FC<TestCodecPanelProps> = ({
                     disabled={loading || !codecCode.trim()}
                     startIcon={<PlayArrowIcon />}
                     onClick={() => {
-                        // Drop the previous result before starting, so a run in flight
-                        // never shows the last run's output as if it were this one's.
+                        // Load-bearing, not just cosmetic - do not remove as "redundant".
+                        // Clearing the result unmounts the output CodeEditor below and
+                        // forces a fresh one to mount for the next run. Without that, a
+                        // second run left the first run's JSON on screen: the read-only
+                        // editor did not pick up its new `value` in place, which is what
+                        // made the panel look like it could only ever be run once.
+                        // (@uiw/react-codemirror does dispatch a doc-replacing
+                        // transaction when `value` changes, but this instance is
+                        // readOnly + editable={false}, and remounting is the reliable
+                        // way to get new content into it.)
                         mutate(undefined);
                         runTest();
                     }}
