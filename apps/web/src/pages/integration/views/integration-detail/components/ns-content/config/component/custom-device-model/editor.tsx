@@ -90,12 +90,9 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
         setEntities(model.entities?.length ? model.entities : [emptyEntity()]);
     }, [model]);
 
-    const updateEntity = useCallback(
-        (index: number, patch: Partial<CustomDeviceModelEntity>) => {
-            setEntities(prev => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
-        },
-        [],
-    );
+    const updateEntity = useCallback((index: number, patch: Partial<CustomDeviceModelEntity>) => {
+        setEntities(prev => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
+    }, []);
 
     const addEntity = useCallback(() => {
         setEntities(prev => [...prev, emptyEntity()]);
@@ -124,7 +121,8 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
 
     const errorMessage = useMemo(() => {
         if (!name.trim()) return getIntlText('setting.integration.custom_model_name_required');
-        if (!codecCode.trim()) return getIntlText('setting.integration.custom_model_codec_required');
+        if (!codecCode.trim())
+            return getIntlText('setting.integration.custom_model_codec_required');
         if (!validEntities.length) {
             return getIntlText('setting.integration.custom_model_entity_required');
         }
@@ -149,6 +147,9 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
                 name: entity.name?.trim() || entity.identifier.trim(),
                 value_type: entity.value_type,
                 unit: entity.unit?.trim() || undefined,
+                // Only meaningful for BOOLEAN; the backend ignores them otherwise.
+                true_label: entity.true_label?.trim() || undefined,
+                false_label: entity.false_label?.trim() || undefined,
             })),
         };
 
@@ -245,9 +246,7 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
                             label={getIntlText('setting.integration.custom_model_entity_key')}
                             placeholder="temperature"
                             value={entity.identifier}
-                            error={
-                                showErrors && duplicateIdentifiers.has(entity.identifier.trim())
-                            }
+                            error={showErrors && duplicateIdentifiers.has(entity.identifier.trim())}
                             onChange={e => updateEntity(index, { identifier: e.target.value })}
                         />
                         <TextField
@@ -273,12 +272,44 @@ const CustomDeviceModelEditor: React.FC<IProps> = ({ model, onCancel, onSuccess 
                                 </MenuItem>
                             ))}
                         </TextField>
-                        <TextField
-                            fullWidth
-                            label={getIntlText('setting.integration.custom_model_entity_unit')}
-                            value={entity.unit}
-                            onChange={e => updateEntity(index, { unit: e.target.value })}
-                        />
+                        {entity.value_type === 'BOOLEAN' ? (
+                            // A unit means nothing for a boolean, so the row swaps it for the
+                            // two state labels rather than growing a sixth field. Both have to
+                            // be filled in for the labels to take effect - a half-filled pair
+                            // would leave one state showing a label and the other a bare
+                            // true/false.
+                            <>
+                                <TextField
+                                    fullWidth
+                                    label={getIntlText(
+                                        'setting.integration.custom_model_entity_false_label',
+                                    )}
+                                    placeholder="Normal"
+                                    value={entity.false_label || ''}
+                                    onChange={e =>
+                                        updateEntity(index, { false_label: e.target.value })
+                                    }
+                                />
+                                <TextField
+                                    fullWidth
+                                    label={getIntlText(
+                                        'setting.integration.custom_model_entity_true_label',
+                                    )}
+                                    placeholder="Alarm"
+                                    value={entity.true_label || ''}
+                                    onChange={e =>
+                                        updateEntity(index, { true_label: e.target.value })
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <TextField
+                                fullWidth
+                                label={getIntlText('setting.integration.custom_model_entity_unit')}
+                                value={entity.unit}
+                                onChange={e => updateEntity(index, { unit: e.target.value })}
+                            />
+                        )}
                         <MuiTooltip title={getIntlText('common.label.delete')}>
                             <span>
                                 <IconButton

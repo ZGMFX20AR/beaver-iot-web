@@ -96,6 +96,14 @@ export interface CustomDeviceModelEntity {
     name?: string;
     value_type: CustomDeviceModelValueType;
     unit?: string;
+    /**
+     * State labels for a BOOLEAN entity, stored as its `enum` attribute. Dashboard widgets
+     * key their per-state label, icon and colour off that enum rather than off the value
+     * type, so a boolean without both labels renders as a bare true/false with a single
+     * appearance. Ignored for every other value type.
+     */
+    true_label?: string;
+    false_label?: string;
 }
 
 /** A stored custom device model */
