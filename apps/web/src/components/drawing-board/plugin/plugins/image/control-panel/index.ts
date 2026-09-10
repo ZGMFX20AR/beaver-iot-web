@@ -118,7 +118,14 @@ const imageControlPanelConfig = (): ControlPanelConfig<ImageConfigType> => {
                                 rules: {
                                     required: true,
                                     pattern: {
-                                        value: /^https?:\/\//,
+                                        // A root-relative path is allowed alongside a full
+                                        // URL so a same-origin source can be given without
+                                        // naming a host. Typing the host instead bakes it
+                                        // into the saved dashboard, which then breaks when
+                                        // the dashboard is opened by any other hostname.
+                                        // The view uses this string verbatim, so the browser
+                                        // resolves it against the current origin.
+                                        value: /^(https?:\/\/|\/)/,
                                         message: t('valid.input.url'),
                                     },
                                 },
