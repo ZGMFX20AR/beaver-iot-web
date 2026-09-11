@@ -84,3 +84,9 @@ export {
     type AiAssistantChatMessage,
 } from './ai-assistant';
 export { default as blueprintAPI, BlueprintSourceType, type BlueprintAPISchema } from './blueprint';
+export {
+    default as edgeAiStreamAPI,
+    type EdgeAiStreamAPISchema,
+    type CameraSourceType,
+    type CameraSourcePayload,
+} from './edgeai-stream';
