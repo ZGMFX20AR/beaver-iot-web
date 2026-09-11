@@ -117,14 +117,36 @@ const View = (props: ViewProps) => {
             return;
         }
 
+        // Probe the source before rendering it, so a broken one shows the placeholder
+        // rather than a broken-image glyph.
         const image = new Image();
         image.onload = () => {
             setLoadedImageSrc(imageSrc);
+            // Release the probe's own connection once it has served its purpose. For an
+            // ordinary image this is immaterial - the request is already finished - but a
+            // source can be a live MJPEG stream, where `load` fires on the first frame and
+            // the connection then stays open indefinitely. Left alone, every image widget
+            // would hold two streams for as long as it is on screen: this probe plus the
+            // <img> rendered below, doubling the load on whatever is serving them.
+            //
+            // Detach the handlers first: removing the attribute can itself raise `error`,
+            // which would otherwise immediately undo the state just set.
+            image.onload = null;
+            image.onerror = null;
+            image.removeAttribute('src');
         };
         image.onerror = () => {
             setLoadedImageSrc('');
         };
         image.src = imageSrc;
+
+        return () => {
+            // Same reasoning for a widget that is removed, or whose source changes, before
+            // the first frame arrives - without this the abandoned probe keeps streaming.
+            image.onload = null;
+            image.onerror = null;
+            image.removeAttribute('src');
+        };
     }, [imageSrc]);
 
     // ---------- Entity status management ----------
