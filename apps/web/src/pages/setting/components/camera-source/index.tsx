@@ -212,7 +212,9 @@ const CameraSource = () => {
                 onSuccess={handleChanged}
             />
             <Modal
-                size="sm"
+                // md is 450px. sm is only 200px - too narrow for the title, the helper text
+                // or the URL preview, which clipped the content and scrolled sideways.
+                size="md"
                 title={getIntlText('setting.camera_source.copy_title')}
                 visible={!!copyTarget}
                 okButtonProps={{ disabled: !isPipelineValid }}
