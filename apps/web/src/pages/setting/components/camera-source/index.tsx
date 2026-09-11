@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useRequest } from 'ahooks';
-import { Button, IconButton, Stack } from '@mui/material';
+import { Button, IconButton, Stack, TextField } from '@mui/material';
 import { type GridColDef } from '@mui/x-data-grid';
 import { useI18n } from '@milesight/shared/src/hooks';
 import {
@@ -8,6 +8,7 @@ import {
     DeleteOutlineIcon,
     EditIcon,
     ContentCopyIcon,
+    Modal,
     toast,
 } from '@milesight/shared/src/components';
 import { TablePro, Tooltip, useConfirm, PermissionControlHidden } from '@/components';
@@ -76,17 +77,30 @@ const CameraSource = () => {
         [confirm, getIntlText, getSources],
     );
 
-    /**
-     * Copy the widget path for a source. The pipeline id is left as a placeholder because
-     * only the user knows which pipeline on that box they want.
-     */
-    const handleCopyPath = useCallback(
-        (record: CameraSourceType) => {
-            navigator.clipboard?.writeText(record.stream_path_template);
-            toast.success(getIntlText('setting.camera_source.path_copied'));
-        },
-        [getIntlText],
-    );
+    // ---------- Copy a ready-to-use stream URL ----------
+    // Asks for the pipeline number and copies a complete URL, rather than a template with a
+    // placeholder to edit by hand. The template ended in {pipelineId}, and filling it in
+    // the natural way - replacing the word, keeping the braces - produced a URL the relay
+    // rejected, with nothing on screen to say why: an <img> cannot report the status it got.
+    const [copyTarget, setCopyTarget] = useState<CameraSourceType | null>(null);
+    const [pipeline, setPipeline] = useState('');
+    const isPipelineValid = /^\d+$/.test(pipeline.trim());
+
+    const handleCopyPath = useCallback((record: CameraSourceType) => {
+        setPipeline('');
+        setCopyTarget(record);
+    }, []);
+
+    const resolvedUrl = copyTarget
+        ? copyTarget.stream_path_template.replace('{pipelineId}', pipeline.trim())
+        : '';
+
+    const handleConfirmCopy = useCallback(async () => {
+        if (!isPipelineValid) return;
+        await navigator.clipboard?.writeText(resolvedUrl);
+        toast.success(getIntlText('setting.camera_source.path_copied'));
+        setCopyTarget(null);
+    }, [isPipelineValid, resolvedUrl, getIntlText]);
 
     const columns: GridColDef<CameraSourceType>[] = useMemo(
         () => [
@@ -197,6 +211,35 @@ const CameraSource = () => {
                 }}
                 onSuccess={handleChanged}
             />
+            <Modal
+                size="sm"
+                title={getIntlText('setting.camera_source.copy_title')}
+                visible={!!copyTarget}
+                okButtonProps={{ disabled: !isPipelineValid }}
+                onOk={handleConfirmCopy}
+                onCancel={() => setCopyTarget(null)}
+            >
+                <TextField
+                    autoFocus
+                    fullWidth
+                    margin="dense"
+                    label={getIntlText('setting.camera_source.pipeline')}
+                    placeholder="14"
+                    value={pipeline}
+                    error={!!pipeline && !isPipelineValid}
+                    helperText={
+                        pipeline && !isPipelineValid
+                            ? getIntlText('setting.camera_source.pipeline_invalid')
+                            : getIntlText('setting.camera_source.pipeline_helper')
+                    }
+                    inputProps={{ inputMode: 'numeric' }}
+                    onChange={e => setPipeline(e.target.value)}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter') handleConfirmCopy();
+                    }}
+                />
+                {isPipelineValid && <div className="ms-camera-source__preview">{resolvedUrl}</div>}
+            </Modal>
         </div>
     );
 };

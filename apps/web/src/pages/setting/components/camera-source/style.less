@@ -11,3 +11,16 @@
         color: var(--text-color-tertiary);
     }
 }
+
+// Top level rather than nested: it renders inside the copy dialog, which is portalled
+// out of .ms-camera-source, so a nested selector would never match.
+.ms-camera-source__preview {
+    padding: @padding-xs @padding-sm;
+    margin-top: @margin-xs;
+    font-family: monospace;
+    font-size: @font-size-sm;
+    color: var(--text-color-secondary);
+    word-break: break-all;
+    background: var(--component-background-gray, rgba(0, 0, 0, 0.04));
+    border-radius: @border-radius-base;
+}
